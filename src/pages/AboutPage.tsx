@@ -1,11 +1,12 @@
 const expertise = [
   'Bioinformatics',
-  'Machine Learning',
-  'Data Visualization',
+  'Product Engineering',
+  'Interactive Tooling',
+  'TypeScript / React',
   'Python / R',
-  'System Architecture',
+  'Cloud Architecture',
   'Computational Biology',
-  'Statistical Modeling',
+  'Interaction Design',
 ]
 
 export function AboutPage() {
@@ -23,18 +24,20 @@ export function AboutPage() {
           </h1>
           <div className="font-mono text-body-lg text-on-surface-variant max-w-2xl flex flex-col gap-6 mt-8">
             <p>
-              My background lies at the intersection of complex systems. I started my career deep
-              in the lab, studying biological engineering. The microscopic world taught me about
-              emergent behaviors, structural elegance, and the messy beauty of living datasets.
+              My background sits at the intersection of complex systems. I started in the lab,
+              studying biological engineering — the microscopic world taught me about emergent
+              behavior, structural elegance, and the messy beauty of living datasets.
             </p>
             <p>
-              However, the sheer volume of biological data demanded new tools. I pivoted toward
-              Data Science, seeking to translate the chaos of organic systems into structured,
-              actionable insights.
+              A PhD in Bioinformatics at Ghent University pulled me toward computation. There I
+              built network-based tools (IAMBEE, PheNetic) for genotype-phenotype mapping and
+              published the work in Nucleic Acids Research.
             </p>
             <p>
-              Today, I apply that same rigorous, systems-level thinking to digital products and
-              complex data architectures, finding clarity in noise.
+              Since then I've spent my time inside molecular diagnostics — first at Biocartis,
+              now at miDiagnostics — building the data pipelines, analytics, and internal
+              platforms that turn assay data into something a team can actually act on. Equal
+              parts data science, software, and interface.
             </p>
           </div>
         </div>

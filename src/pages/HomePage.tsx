@@ -9,9 +9,9 @@ const stack = [
   },
   {
     n: '02',
-    icon: 'data_object',
-    title: 'Machine Learning',
-    body: 'Implementing predictive models, deep learning networks (PyTorch/TensorFlow), and dimensionality reduction techniques for complex multi-omics data integration.',
+    icon: 'dashboard_customize',
+    title: 'Product Engineering',
+    body: 'Shipping end-to-end web platforms with React, TypeScript, and considered interaction design — turning specialized scientific workflows into tools researchers actually want to use.',
   },
   {
     n: '03',
@@ -22,8 +22,8 @@ const stack = [
   {
     n: '04',
     icon: 'schema',
-    title: 'Data Visualization',
-    body: 'Crafting bespoke, interactive visual tools using D3.js and WebGL to render complex networks, structural alignments, and massive dimensional spaces intelligible.',
+    title: 'Interactive Tooling',
+    body: 'Building bespoke scientific interfaces with D3.js and WebGL — rendering complex networks, structural alignments, and high-dimensional spaces into something a human can reason about.',
   },
 ]
 

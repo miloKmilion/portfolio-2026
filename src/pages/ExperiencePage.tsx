@@ -9,34 +9,36 @@ type Role = {
 
 const roles: Role[] = [
   {
-    period: 'Present',
+    period: 'Jun 2024 — Present',
     current: true,
     role: 'Data Scientist',
     org: 'miDiagnostics',
-    blurb: 'Leading advanced data analysis and algorithm development for rapid diagnostic platforms.',
+    blurb:
+      'Building data products and internal tooling for a rapid molecular diagnostics platform.',
     bullets: [
-      'Statistical modeling for diagnostic assay optimization.',
-      'Implementation of machine learning pipelines for predictive analytics.',
+      'Designing and shipping the internal Ads / analytics platform end-to-end.',
+      'Statistical modeling and predictive analytics for diagnostic assay performance.',
     ],
   },
   {
-    period: '2019 — 2022',
+    period: 'Jan 2021 — Jan 2024',
     role: 'Data Scientist',
     org: 'Biocartis',
-    blurb: 'Spearheaded bioinformatics strategies for molecular diagnostic solutions.',
+    blurb: 'Bioinformatics and analytics for molecular diagnostic assay development.',
     bullets: [
-      'Data-driven validation of biomarker assays.',
-      'Cross-functional collaboration with R&D teams.',
+      'Data-driven validation of biomarker assays alongside R&D.',
+      'Software development across analytical pipelines and reporting tools.',
     ],
   },
   {
-    period: '2014 — 2019',
-    role: 'PhD Student',
+    period: 'Oct 2016 — Nov 2020',
+    role: 'PhD, Bioinformatics',
     org: 'Ghent University',
-    blurb: 'Foundational research in computational biology and statistical genetics.',
+    blurb:
+      'Network-based methods for genotype-phenotype mapping in adaptive evolution.',
     bullets: [
-      'Advanced genomic data analysis.',
-      'Publication of peer-reviewed research in high-impact journals.',
+      'Authored IAMBEE & PheNetic — web tools for pathway identification from clonal evolution data.',
+      'Published in Nucleic Acids Research and Genes & Immunity.',
     ],
   },
 ]
@@ -45,15 +47,14 @@ const dataScience = [
   'Python',
   'R',
   'Scikit-Learn',
-  'TensorFlow',
   'Statistical Modeling',
   'Predictive Analytics',
-  'NLP',
+  'NumPy / SciPy',
 ]
 
-const bioinformatics = ['Genomic Analysis', 'Biomarker Discovery', 'Pipeline Dev']
-const dataEngineering = ['SQL', 'Spark', 'AWS', 'Docker', 'Git']
-const visualization = ['ggplot2', 'Matplotlib', 'Tableau']
+const bioinformatics = ['Genomic Analysis', 'Network Analysis', 'Pipeline Dev']
+const dataEngineering = ['SQL', 'AWS', 'Docker', 'Git', 'Linux']
+const tooling = ['TypeScript', 'React', 'D3.js', 'ggplot2', 'Matplotlib']
 
 export function ExperiencePage() {
   return (
@@ -262,14 +263,14 @@ export function ExperiencePage() {
               <div className="md:w-1/2">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="material-symbols-outlined text-primary">query_stats</span>
-                  <h3 className="font-display text-headline-sm text-on-surface">Data Visualization</h3>
+                  <h3 className="font-display text-headline-sm text-on-surface">Interactive Tooling</h3>
                 </div>
                 <p className="font-mono text-body-md text-on-surface-variant mb-6">
-                  Translating complex multi-dimensional datasets into intuitive visual narratives
-                  for stakeholders.
+                  Building scientific interfaces and visualizations that make complex,
+                  high-dimensional data legible to the people working with it.
                 </p>
                 <div className="flex gap-4 flex-wrap">
-                  {visualization.map((s) => (
+                  {tooling.map((s) => (
                     <span
                       key={s}
                       className="font-mono text-label-caps tracking-[0.1em] uppercase text-primary border-b border-primary pb-1"

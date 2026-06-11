@@ -115,11 +115,10 @@ export function HomePage() {
             </article>
           ))}
 
-          <article className="border-b border-r lg:col-span-2 relative overflow-hidden group min-h-[300px] border-outline-variant">
-            <div className="absolute inset-0 bg-surface-container-high">
-              <div className="w-full h-full opacity-30 group-hover:opacity-50 transition-opacity duration-700 mix-blend-luminosity bg-[radial-gradient(circle_at_30%_30%,#a7e1ff20,transparent_60%),radial-gradient(circle_at_70%_70%,#86c6e520,transparent_60%)]" />
-            </div>
-            <div className="absolute inset-0 p-10 flex flex-col justify-end bg-gradient-to-t from-background via-background/80 to-transparent">
+          <article className="border-b border-r lg:col-span-2 relative overflow-hidden group min-h-[300px] border-outline-variant bg-surface-container-high">
+            <div className="absolute inset-0 opacity-30 group-hover:opacity-50 transition-opacity duration-700 mix-blend-luminosity bg-[radial-gradient(circle_at_30%_30%,#a7e1ff20,transparent_60%),radial-gradient(circle_at_70%_70%,#86c6e520,transparent_60%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none" />
+            <div className="relative h-full p-10 flex flex-col justify-end">
               <span className="font-mono text-label-caps tracking-[0.1em] uppercase text-primary mb-4">
                 Case Study Highlight
               </span>

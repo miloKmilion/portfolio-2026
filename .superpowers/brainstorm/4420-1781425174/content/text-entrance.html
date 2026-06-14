@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Text Entrance Options</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #16130e;
+    color: #eae1d8;
+    font-family: "JetBrains Mono", monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px;
+    gap: 60px;
+  }
+  h1 { font-family: "Playfair Display", serif; font-size: 20px; color: #a7e1ff; text-align: center; margin-bottom: 8px; }
+  .subtitle { font-size: 13px; color: #8a9297; text-align: center; margin-bottom: 40px; }
+
+  .demo-section {
+    width: 100%;
+    max-width: 700px;
+    border: 1px solid #40484d;
+    border-radius: 8px;
+    padding: 40px;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+  .demo-section:hover { border-color: #a7e1ff; }
+  .demo-section.selected { border-color: #a7e1ff; box-shadow: 0 0 20px rgba(167,225,255,0.1); }
+
+  .demo-label {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background: #16130e;
+    padding: 0 8px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #a7e1ff;
+  }
+
+  .demo-content {
+    text-align: center;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .hero-name {
+    font-family: "Playfair Display", serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: #a7e1ff;
+  }
+  .hero-tagline {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 14px;
+    color: #bfc8cd;
+  }
+
+  .replay-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: 1px solid #40484d;
+    color: #8a9297;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: "JetBrains Mono", monospace;
+    transition: all 0.2s;
+  }
+  .replay-btn:hover { border-color: #a7e1ff; color: #a7e1ff; }
+
+  .description {
+    font-size: 12px;
+    color: #8a9297;
+    text-align: center;
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  /* === OPTION A: Fade Up + Stagger === */
+  .fade-up .hero-name,
+  .fade-up .hero-tagline {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease forwards;
+  }
+  .fade-up .hero-tagline {
+    animation-delay: 0.2s;
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === OPTION B: Letter by Letter === */
+  .letter-reveal .hero-name span,
+  .letter-reveal .hero-tagline span {
+    opacity: 0;
+    filter: blur(4px);
+    display: inline-block;
+    animation: letterIn 0.4s ease forwards;
+  }
+  .letter-reveal .hero-name span {
+    /* delays set via inline style */
+  }
+  @keyframes letterIn {
+    to { opacity: 1; filter: blur(0); }
+  }
+
+  /* === OPTION C: Clip Reveal === */
+  .clip-reveal .hero-name,
+  .clip-reveal .hero-tagline {
+    clip-path: inset(0 100% 0 0);
+    animation: clipIn 1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+  .clip-reveal .hero-tagline {
+    animation-delay: 0.3s;
+  }
+  @keyframes clipIn {
+    to { clip-path: inset(0 0% 0 0); }
+  }
+
+  /* Selection indicator */
+  .check {
+    display: none;
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #a7e1ff;
+    color: #16130e;
+    font-size: 14px;
+    line-height: 24px;
+    text-align: center;
+    font-weight: bold;
+  }
+  .demo-section.selected .check { display: block; }
+</style>
+</head>
+<body>
+
+<div>
+  <h1>Text Entrance Animation</h1>
+  <p class="subtitle">Click a section to select it. Hit "Replay" to re-watch the animation.</p>
+</div>
+
+<!-- Option A -->
+<div class="demo-section" data-choice="a" onclick="selectOption(this)">
+  <span class="demo-label">A — Fade Up + Stagger</span>
+  <button class="replay-btn" onclick="event.stopPropagation(); replayA()">Replay</button>
+  <div class="demo-content fade-up" id="demoA">
+    <div class="hero-name">Camilo Perez</div>
+    <div class="hero-tagline">biology × computation × design</div>
+  </div>
+  <p class="description">Name slides up and fades in, tagline follows 200ms later. Clean, confident, widely used.</p>
+  <span class="check">✓</span>
+</div>
+
+<!-- Option B -->
+<div class="demo-section" data-choice="b" onclick="selectOption(this)">
+  <span class="demo-label">B — Letter-by-Letter Reveal</span>
+  <button class="replay-btn" onclick="event.stopPropagation(); replayB()">Replay</button>
+  <div class="demo-content letter-reveal" id="demoB">
+    <div class="hero-name" id="nameLetters"></div>
+    <div class="hero-tagline" id="tagLetters"></div>
+  </div>
+  <p class="description">Each character appears with a blur-to-sharp transition. More dramatic, playful, and unique.</p>
+  <span class="check">✓</span>
+</div>
+
+<!-- Option C -->
+<div class="demo-section" data-choice="c" onclick="selectOption(this)">
+  <span class="demo-label">C — Clip / Mask Reveal</span>
+  <button class="replay-btn" onclick="event.stopPropagation(); replayC()">Replay</button>
+  <div class="demo-content clip-reveal" id="demoC">
+    <div class="hero-name">Camilo Perez</div>
+    <div class="hero-tagline">biology × computation × design</div>
+  </div>
+  <p class="description">A horizontal sweep reveals text underneath, like a curtain lift. Elegant and minimal.</p>
+  <span class="check">✓</span>
+</div>
+
+<script>
+  // Letter-by-letter setup
+  function buildLetters(text, container, baseDelay) {
+    container.innerHTML = '';
+    [...text].forEach((char, i) => {
+      const span = document.createElement('span');
+      span.textContent = char === ' ' ? ' ' : char;
+      span.style.animationDelay = (baseDelay + i * 0.04) + 's';
+      container.appendChild(span);
+    });
+  }
+
+  function initB() {
+    buildLetters('Camilo Perez', document.getElementById('nameLetters'), 0);
+    buildLetters('biology × computation × design', document.getElementById('tagLetters'), 0.6);
+  }
+  initB();
+
+  // Replay functions
+  function replayA() {
+    const el = document.getElementById('demoA');
+    el.classList.remove('fade-up');
+    void el.offsetWidth;
+    el.classList.add('fade-up');
+  }
+
+  function replayB() {
+    initB();
+  }
+
+  function replayC() {
+    const el = document.getElementById('demoC');
+    el.classList.remove('clip-reveal');
+    void el.offsetWidth;
+    el.classList.add('clip-reveal');
+  }
+
+  // Selection
+  let selected = null;
+  function selectOption(el) {
+    if (selected) selected.classList.remove('selected');
+    el.classList.add('selected');
+    selected = el;
+  }
+</script>
+</body>
+</html>

@@ -79,7 +79,7 @@ export function GitGraph() {
   const totalH = mergeY + 40
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 overflow-hidden">
       {/* Main layout */}
       <div className="relative flex items-start gap-0">
         {/* Graph column */}
@@ -161,7 +161,7 @@ export function GitGraph() {
                 {node.n}
               </span>
               <span
-                className="font-display text-headline-sm transition-colors duration-200 whitespace-nowrap"
+                className="font-display text-headline-sm transition-colors duration-200 md:whitespace-nowrap"
                 style={{ color: active === node.id ? BRANCH_COLORS[node.branch] : 'var(--color-on-surface)' }}
               >
                 {node.title}

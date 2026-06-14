@@ -54,10 +54,20 @@ const TRUNK_X = 24
 const BIO_X = 12
 const PRODUCT_X = 36
 const ROW_H = 72
-const START_Y = 32
+const START_Y = 48
+
+function useIsMobile() {
+  const [mobile, setMobile] = useState(false)
+  if (typeof window !== 'undefined') {
+    const mq = window.matchMedia('(max-width: 767px)')
+    if (mobile !== mq.matches) setMobile(mq.matches)
+  }
+  return mobile
+}
 
 export function GitGraph() {
   const [active, setActive] = useState<string | null>(null)
+  const isMobile = useIsMobile()
 
   const nodePositions = nodes.map((node, i) => {
     const cx = node.branch === 'bio' ? BIO_X : PRODUCT_X
@@ -143,9 +153,9 @@ export function GitGraph() {
               key={node.id}
               className="absolute left-0 flex items-center gap-3 cursor-pointer group"
               style={{ top: `${node.cy}px`, transform: 'translateY(-50%)' }}
-              onMouseEnter={() => setActive(node.id)}
-              onMouseLeave={() => setActive(null)}
-              onClick={() => setActive(active === node.id ? null : node.id)}
+              onMouseEnter={() => !isMobile && setActive(node.id)}
+              onMouseLeave={() => !isMobile && setActive(null)}
+              onClick={() => isMobile && setActive(active === node.id ? null : node.id)}
             >
               <span className="font-mono text-label-caps tracking-[0.1em] text-on-surface-variant opacity-50 w-6">
                 {node.n}

@@ -48,6 +48,16 @@ interface Ball {
   vy: number
   grounded: boolean
   claimed: boolean
+  groundedTime: number
+}
+
+const BUBBLES: Record<PetType, string[]> = {
+  dog: ['woof!', 'throw me a ball!', ':)', '*wags tail*', 'hover on a node!', ';)'],
+  cat: ['meow?', '*purrs*', ':3', 'nice portfolio huh', '^^', '*stretches*'],
+  cockatiel: ['tweet tweet!', '*chirps*', ':)', 'hover on a node!', '*head bob*', '^^'],
+  crab: ['*snip snip*', ':)', 'nice portfolio huh', '*waves claw*', ';)', 'throw me a ball!'],
+  duck: ['quack!', '*waddles*', ':)', 'hover on a node!', '^^', 'quack quack~'],
+  clippy: ['need help?', ';)', 'hover on a node!', '*waves*', 'hi there~', ':)'],
 }
 
 let nextId = 0
@@ -74,10 +84,12 @@ export function PetPlayground() {
   const [showMenu, setShowMenu] = useState(false)
   const [thrown, setThrown] = useState(0)
   const [caught, setCaught] = useState(0)
+  const [bubble, setBubble] = useState<{ petId: number; text: string } | null>(null)
   const petsRef = useRef(pets)
   const ballsRef = useRef(balls)
   const containerRef = useRef<HTMLDivElement>(null)
   const heightRef = useRef(200)
+  const bubbleTimerRef = useRef(3000 + Math.random() * 4000)
 
   petsRef.current = pets
   ballsRef.current = balls
@@ -99,7 +111,8 @@ export function PetPlayground() {
       const currentBalls = ballsRef.current
       const groundY = heightRef.current - 50
 
-      for (const ball of currentBalls) {
+      for (let i = currentBalls.length - 1; i >= 0; i--) {
+        const ball = currentBalls[i]
         if (!ball.grounded) {
           ball.vy += 0.15
           ball.y += ball.vy
@@ -112,10 +125,26 @@ export function PetPlayground() {
             }
           }
           changed = true
+        } else {
+          ball.groundedTime += dt
+          if (ball.groundedTime >= 3000) {
+            currentBalls.splice(i, 1)
+            changed = true
+          }
         }
       }
 
       for (const pet of currentPets) {
+        if (pet.state === 'chasing') {
+          const ballExists = currentBalls.some(b => b.id === pet.chasingBallId)
+          if (!ballExists) {
+            pet.state = 'idle'
+            pet.chasingBallId = null
+            pet.idleTimer = 1000 + Math.random() * 2000
+            changed = true
+          }
+        }
+
         if (pet.state !== 'chasing') {
           const unclaimed = currentBalls.find(b => b.grounded && !b.claimed)
           if (unclaimed) {
@@ -170,13 +199,61 @@ export function PetPlayground() {
     return () => cancelAnimationFrame(raf)
   }, [])
 
+  useEffect(() => {
+    let raf: number
+    let lastTime = performance.now()
+    let showTimer = bubbleTimerRef.current
+    let hideTimer = 0
+    let showing = false
+
+    function tick(now: number) {
+      const dt = Math.min(now - lastTime, 50)
+      lastTime = now
+
+      if (showing) {
+        hideTimer -= dt
+        if (hideTimer <= 0) {
+          showing = false
+          showTimer = 4000 + Math.random() * 6000
+          setBubble(null)
+        }
+      } else {
+        showTimer -= dt
+        if (showTimer <= 0) {
+          const currentPets = petsRef.current
+          if (currentPets.length > 0) {
+            const pet = currentPets[Math.floor(Math.random() * currentPets.length)]
+            const petBubbles = BUBBLES[pet.type]
+            const text = petBubbles[Math.floor(Math.random() * petBubbles.length)]
+            setBubble({ petId: pet.id, text })
+            showing = true
+            hideTimer = 2500 + Math.random() * 1500
+          }
+        }
+      }
+
+      raf = requestAnimationFrame(tick)
+    }
+
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  useEffect(() => {
+    if (!showMenu) return
+    function handleClick() { setShowMenu(false) }
+    document.addEventListener('click', handleClick)
+    return () => document.removeEventListener('click', handleClick)
+  }, [showMenu])
+
   const throwBall = useCallback((e: React.MouseEvent) => {
     if (!containerRef.current) return
     if ((e.target as HTMLElement).closest('button')) return
+    if ((e.target as HTMLElement).closest('[data-menu]')) return
     const rect = containerRef.current.getBoundingClientRect()
     const xPct = ((e.clientX - rect.left) / rect.width) * 100
     const clamped = Math.max(5, Math.min(95, xPct))
-    const newBall: Ball = { id: nextBallId++, x: clamped, y: 0, vy: 0, grounded: false, claimed: false }
+    const newBall: Ball = { id: nextBallId++, x: clamped, y: 0, vy: 0, grounded: false, claimed: false, groundedTime: 0 }
     setBalls(prev => [...prev, newBall])
     ballsRef.current = [...ballsRef.current, newBall]
     setThrown(t => t + 1)
@@ -224,7 +301,7 @@ export function PetPlayground() {
         {/* Balls */}
         {balls.map(ball => (
           <div
-            key={ball.id}
+            key={`ball-${ball.id}`}
             className="absolute w-3 h-3 rounded-full bg-primary"
             style={{
               left: `${ball.x}%`,
@@ -237,18 +314,32 @@ export function PetPlayground() {
         {/* Pets */}
         {pets.map(pet => (
           <div
-            key={pet.id}
+            key={`pet-${pet.id}`}
             className="absolute bottom-3 transition-none"
             style={{
               left: `${pet.x}%`,
-              transform: `translateX(-50%) scaleX(${pet.facingLeft ? -1 : 1})`,
+              transform: `translateX(-50%)`,
             }}
           >
+            {/* Speech bubble */}
+            {bubble && bubble.petId === pet.id && (
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 animate-fade-in">
+                <div className="relative bg-surface-container-high border border-outline-variant rounded-lg px-2.5 py-1 whitespace-nowrap">
+                  <span className="font-mono text-label-caps tracking-[0.03em] text-on-surface-variant">
+                    {bubble.text}
+                  </span>
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-surface-container-high border-b border-r border-outline-variant rotate-45" />
+                </div>
+              </div>
+            )}
             <img
               src={getSrc(pet)}
               alt={PET_TYPES[pet.type].label}
               className="h-[36px]"
-              style={{ imageRendering: 'pixelated' }}
+              style={{
+                imageRendering: 'pixelated',
+                transform: `scaleX(${pet.facingLeft ? -1 : 1})`,
+              }}
             />
           </div>
         ))}
@@ -260,16 +351,16 @@ export function PetPlayground() {
         </div>
 
         {/* Controls */}
-        <div className="absolute top-3 right-3 flex items-center gap-2">
+        <div className="absolute top-3 right-3 flex items-center gap-1.5">
           <button
             onClick={(e) => {
               e.stopPropagation()
               reset()
             }}
-            className="flex items-center gap-1.5 bg-surface-container-high border border-outline-variant px-3 py-1.5 font-mono text-label-caps tracking-[0.05em] text-on-surface-variant hover:text-primary hover:border-primary transition-colors"
+            className="flex items-center justify-center w-7 h-7 bg-surface-container-high border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary transition-colors"
+            title="Reset"
           >
             <span className="material-symbols-outlined text-[16px]">restart_alt</span>
-            <span>Reset</span>
           </button>
           <button
             onClick={(e) => {
@@ -277,16 +368,17 @@ export function PetPlayground() {
               setShowMenu(!showMenu)
             }}
             disabled={pets.length >= MAX_PETS}
-            className="flex items-center gap-1.5 bg-surface-container-high border border-outline-variant px-3 py-1.5 font-mono text-label-caps tracking-[0.05em] text-on-surface-variant hover:text-primary hover:border-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex items-center justify-center w-7 h-7 bg-surface-container-high border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            title="Add pet"
           >
             <span className="material-symbols-outlined text-[16px]">add</span>
-            <span>Add pet</span>
           </button>
         </div>
 
         {/* Pet picker menu */}
         {showMenu && (
           <div
+            data-menu
             className="absolute bottom-full right-3 mb-1 bg-surface-container-high border border-outline-variant p-2 flex flex-col gap-1 z-30 max-h-[140px] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >

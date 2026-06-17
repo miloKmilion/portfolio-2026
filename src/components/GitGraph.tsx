@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { PetPlayground } from './PetPlayground'
 
-interface Node {
+interface GraphNode {
   id: string
   n: string
   icon: string
@@ -10,7 +10,7 @@ interface Node {
   branch: 'bio' | 'product'
 }
 
-const nodes: Node[] = [
+const nodes: GraphNode[] = [
   {
     id: 'bio-1',
     n: '01',
@@ -68,6 +68,23 @@ function useIsMobile() {
 export function GitGraph() {
   const [active, setActive] = useState<string | null>(null)
   const isMobile = useIsMobile()
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!active) return
+    function handleDown(e: MouseEvent | TouchEvent) {
+      if (!rootRef.current) return
+      if (!rootRef.current.contains(e.target as Node)) {
+        setActive(null)
+      }
+    }
+    document.addEventListener('mousedown', handleDown)
+    document.addEventListener('touchstart', handleDown)
+    return () => {
+      document.removeEventListener('mousedown', handleDown)
+      document.removeEventListener('touchstart', handleDown)
+    }
+  }, [active])
 
   const nodePositions = nodes.map((node, i) => {
     const cx = node.branch === 'bio' ? BIO_X : PRODUCT_X
@@ -79,7 +96,7 @@ export function GitGraph() {
   const totalH = mergeY + 40
 
   return (
-    <div className="space-y-8 overflow-hidden">
+    <div ref={rootRef} className="space-y-8 overflow-hidden">
       {/* Main layout */}
       <div className="relative flex items-start gap-0">
         {/* Graph column */}
@@ -240,15 +257,15 @@ export function GitGraph() {
             return (
               <div
                 key={`card-${node.id}`}
-                className="absolute inset-x-0 pointer-events-none transition-all duration-300 ease-out z-10"
+                className="absolute left-0 right-6 pointer-events-none transition-all duration-300 ease-out z-10"
                 style={{
                   top: `${node.cy}px`,
-                  transform: `translateY(-50%) scale(${isActive ? 1 : 0.95})`,
+                  transform: `translateY(max(${-node.cy + 8}px, -50%)) scale(${isActive ? 1 : 0.95})`,
                   opacity: isActive ? 1 : 0,
                 }}
               >
                 <div
-                  className="border border-outline-variant bg-surface-container/95 backdrop-blur-sm p-8 w-full max-w-lg"
+                  className="border border-outline-variant bg-surface-container/95 backdrop-blur-sm p-8 w-full max-w-md"
                   style={{
                     boxShadow: isActive
                       ? `0 0 30px ${BRANCH_COLORS[node.branch]}15, 0 6px 24px rgba(0,0,0,0.4)`

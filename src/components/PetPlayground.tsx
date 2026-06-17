@@ -351,7 +351,7 @@ export function PetPlayground() {
         </div>
 
         {/* Controls */}
-        <div className="absolute top-3 right-3 flex items-center gap-1.5">
+        <div className="absolute top-3 right-3 flex items-start gap-1.5 z-30">
           <button
             onClick={(e) => {
               e.stopPropagation()
@@ -362,43 +362,45 @@ export function PetPlayground() {
           >
             <span className="material-symbols-outlined text-[16px]">restart_alt</span>
           </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowMenu(!showMenu)
-            }}
-            disabled={pets.length >= MAX_PETS}
-            className="flex items-center justify-center w-7 h-7 bg-surface-container-high border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-            title="Add pet"
-          >
-            <span className="material-symbols-outlined text-[16px]">add</span>
-          </button>
-        </div>
+          <div className="relative">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowMenu(!showMenu)
+              }}
+              disabled={pets.length >= MAX_PETS}
+              className="flex items-center justify-center w-7 h-7 bg-surface-container-high border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Add pet"
+            >
+              <span className="material-symbols-outlined text-[16px]">add</span>
+            </button>
 
-        {/* Pet picker menu */}
-        {showMenu && (
-          <div
-            data-menu
-            className="absolute bottom-full right-3 mb-1 bg-surface-container-high border border-outline-variant p-2 flex flex-col gap-1 z-30 max-h-[140px] overflow-y-auto"
-            onClick={e => e.stopPropagation()}
-          >
-            {(Object.keys(PET_TYPES) as PetType[]).map(type => (
-              <button
-                key={type}
-                onClick={() => addPet(type)}
-                className="flex items-center gap-2 px-3 py-1.5 font-mono text-label-caps tracking-[0.05em] text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors text-left"
+            {/* Pet picker menu */}
+            {showMenu && (
+              <div
+                data-menu
+                className="absolute top-full right-0 mt-1 bg-surface-container-high border border-outline-variant p-2 flex flex-col gap-1 max-h-[160px] overflow-y-auto shadow-lg"
+                onClick={e => e.stopPropagation()}
               >
-                <img
-                  src={PET_TYPES[type].idle}
-                  alt=""
-                  className="h-[20px]"
-                  style={{ imageRendering: 'pixelated' }}
-                />
-                <span>{PET_TYPES[type].label}</span>
-              </button>
-            ))}
+                {(Object.keys(PET_TYPES) as PetType[]).map(type => (
+                  <button
+                    key={type}
+                    onClick={() => addPet(type)}
+                    className="flex items-center gap-2 px-3 py-1.5 font-mono text-label-caps tracking-[0.05em] text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors text-left"
+                  >
+                    <img
+                      src={PET_TYPES[type].idle}
+                      alt=""
+                      className="h-[20px]"
+                      style={{ imageRendering: 'pixelated' }}
+                    />
+                    <span>{PET_TYPES[type].label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         {/* Throw hint */}
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-label-caps tracking-[0.05em] text-on-surface-variant opacity-30">
